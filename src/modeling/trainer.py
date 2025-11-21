@@ -46,7 +46,7 @@ class Trainer:
 
     def _load_data(self) -> Tuple[pd.DataFrame, pd.Series]:
         data_config = self.cfg.get("data")
-        csv_config = self.cfg.get("csv", {})
+        csv_config = data_config.get("csv", {})
 
         df = Loader.read_csv(file_path=data_config.get("file_path"), csv_cfg=csv_config)
         target_col = data_config.get("target")
@@ -81,6 +81,17 @@ class Trainer:
             )
         )
 
+    @staticmethod
+    def _create_symlink(
+        ts: str, model_dir: str, symlink_path: str, primary_object: str
+    ) -> None:
+        if os.path.exists(symlink_path):
+            os.remove(symlink_path)
+        os.symlink(
+            os.path.basename(os.path.join(model_dir, f"{primary_object}_{ts}.joblib")),
+            symlink_path,
+        )
+
     def _train(self):
         # Load data
         X, y = self._load_data()
@@ -109,14 +120,14 @@ class Trainer:
 
         self.pipeline.fit(X_train, y_train)
         y_pred = self.pipeline.predict(X_test)
-        y_prob = self.pipeline.predict_proba(X_test)[:1]
+        y_prob = self.pipeline.predict_proba(X_test)[:, 1]
 
         self.metrics = self._formulate_metrics(
             y_test=y_test, y_pred=y_pred, y_prob=y_prob
         )
 
     def _save_artifacts(self):
-        ts = datetime.strftime("%Y_%m_%d_%H_%M_%S")
+        ts = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
         art_dir = self.cfg["artifacts"]["dir"]
         model_dir = os.path.join(art_dir, self.cfg["artifacts"]["model_subdir"])
         metrics_dir = os.path.join(art_dir, self.cfg["artifacts"]["metrics_subdir"])
@@ -127,6 +138,24 @@ class Trainer:
         joblib.dump(
             self.label_encoder, os.path.join(model_dir, f"label_encoder_{ts}.joblib")
         )
+
+        latest_model = os.path.join(model_dir, "latest_model.joblib")
+        latest_label_encoder = os.path.join(model_dir, "latest_label_encoder.joblib")
+        # create a latest pointer to get the latest model while serving
+        Trainer._create_symlink(
+            ts=ts,
+            model_dir=model_dir,
+            symlink_path=latest_model,
+            primary_object="model",
+        )
+
+        Trainer._create_symlink(
+            ts=ts,
+            model_dir=model_dir,
+            symlink_path=latest_label_encoder,
+            primary_object="label_encoder",
+        )
+
         json.dump(
             self.metrics,
             open(os.path.join(metrics_dir, f"metrics_{ts}.json"), "w"),
@@ -138,3 +167,9 @@ class Trainer:
         self._train()
         self._save_artifacts()
         print("Training completed.")
+
+
+if __name__ == "__main__":
+    cfg = Loader.read_yaml(file_path="configs/train.yaml")
+    trainer = Trainer(cfg=cfg)
+    trainer.run()

@@ -1,0 +1,55 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        // ✅ Trainer as a Python *module* (preferred; fixes import errors)
+        "name": "Train (module: src.modeling.trainer)",
+        "type": "debugpy",
+        "request": "launch",
+        "module": "src.modeling.trainer",
+        "cwd": "${workspaceFolder}",
+        "console": "integratedTerminal",
+        "justMyCode": true,
+        "env": {
+          "PYTHONWARNINGS": "ignore"   // optional
+        }
+      },
+      {
+        // ✅ Trainer as a script with explicit PYTHONPATH
+        "name": "Train (script with PYTHONPATH)",
+        "type": "debugpy",
+        "request": "launch",
+        "program": "${workspaceFolder}/src/modeling/trainer.py",
+        "cwd": "${workspaceFolder}",
+        "console": "integratedTerminal",
+        "justMyCode": true,
+        "env": {
+          "PYTHONPATH": "${workspaceFolder}"
+        }
+      },
+      {
+        // ✅ FastAPI server (Uvicorn) with live-reload & breakpoints
+        "name": "API (FastAPI / Uvicorn)",
+        "type": "python",
+        "request": "launch",
+        "module": "uvicorn",
+        "args": [
+          "api.main:app",
+          "--host", "0.0.0.0",
+          "--port", "8000",
+          "--reload"
+        ],
+        "cwd": "${workspaceFolder}",
+        "jinja": true,
+        "console": "integratedTerminal",
+        "justMyCode": true,
+        "env": {
+          // point to your trained artifacts (or leave as defaults used in code)
+          "MODEL_PATH": "artifacts/models/latest.joblib",
+          "LABEL_ENCODER_PATH": "artifacts/models/label_encoder_latest.joblib",
+          "CONFIG_PATH": "configs/train.yaml"
+        }
+      }
+    ]
+  }
+  

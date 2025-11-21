@@ -19,7 +19,7 @@ class Preprocessor:
 
     def build(self) -> Pipeline:
         numeric_preprocessor = Pipeline(
-            [("imputer", SimpleImputer(strategy="media")), ("scaler", StandardScaler())]
+            [("imputer", SimpleImputer(strategy="median")), ("scaler", StandardScaler())]
         )
 
         categorical_preprocessor = Pipeline(

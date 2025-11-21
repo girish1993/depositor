@@ -1,14 +1,14 @@
 data:
-  path: "data/raw/dataset.csv"
+  file_path: "data/raw/dataset.csv"
   target: "y"
   csv:
-    sep: ";"
+    separator: ";"
     quotechar: '"'
 split:
   test_size: 0.2
   random_state: 42
 features:
-  numeric: ["age", "balance", "duration", "campaign", "pdays", "previous", "day"]
+  numerical: ["age", "balance", "duration", "campaign", "pdays", "previous", "day"]
   categorical: ["job", "marital", "education", "default", "housing", "loan", "contact", "month", "poutcome"]
 model:
   type: "xgb"
