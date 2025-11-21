@@ -2,7 +2,7 @@ from typing import Annotated, List
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
-from data_models.data_spec import (
+from api.data_models.data_spec import (
     Contact,
     Education,
     Job,

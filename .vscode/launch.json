@@ -30,7 +30,7 @@
       {
         // ✅ FastAPI server (Uvicorn) with live-reload & breakpoints
         "name": "API (FastAPI / Uvicorn)",
-        "type": "python",
+        "type": "debugpy",
         "request": "launch",
         "module": "uvicorn",
         "args": [
@@ -45,8 +45,8 @@
         "justMyCode": true,
         "env": {
           // point to your trained artifacts (or leave as defaults used in code)
-          "MODEL_PATH": "artifacts/models/latest.joblib",
-          "LABEL_ENCODER_PATH": "artifacts/models/label_encoder_latest.joblib",
+          "MODEL_PATH": "artifacts/models/latest_model.joblib",
+          "LABEL_ENCODER_PATH": "artifacts/models/latest_label_encoder.joblib",
           "CONFIG_PATH": "configs/train.yaml"
         }
       }

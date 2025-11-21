@@ -1,12 +1,17 @@
 import logging
 import os
+import sys
 from contextlib import asynccontextmanager
 
 import joblib
 import pandas as pd
 import yaml
-from data_models.schema_models import ApiRequest, ApiResponse
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from fastapi import FastAPI, Query
+
+from api.data_models.schema_models import ApiRequest, ApiResponse
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
@@ -67,12 +72,12 @@ async def lifespan(app: FastAPI):
         logger.error(f"Encountered exception during startup {e}")
 
 
-app = FastAPI(title="Deposit Predictor API", version="1.0")
+app = FastAPI(title="Deposit Predictor API", version="1.0", lifespan=lifespan)
 
 
 @app.get("/health")
 def health():
-    return {"status": "ok", "model_loaded": app.state.model}
+    return {"status": "ok", "model_loaded": "yes"}
 
 
 @app.post("/predict", response_model=ApiResponse)
