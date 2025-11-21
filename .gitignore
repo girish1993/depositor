@@ -28,6 +28,8 @@ MANIFEST
 
 data/
 artifacts/
+!artifacts/.gitkeep
+!data/.gitkeep
 .vscode
 
 # PyInstaller
