@@ -27,8 +27,8 @@ share/python-wheels/
 MANIFEST
 
 data/
-artifacts/
-!artifacts/.gitkeep
+
+
 !data/.gitkeep
 .vscode
 
