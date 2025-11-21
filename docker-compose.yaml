@@ -1,0 +1,29 @@
+
+services:
+  trainer:
+    build:
+      context: .
+      dockerfile: trainer/Dockerfile
+    image: depositor-trainer:latest
+    command: ["python", "-m", "src.modeling.trainer"]
+    environment:
+      - CONFIG_PATH=/app/configs/train.yaml
+    volumes:
+      - ./artifacts:/app/artifacts
+      - ./data:/app/data
+
+  api:
+    build:
+      context: .
+      dockerfile: api/Dockerfile
+    image: depositor-api:latest
+    environment:
+      - MODEL_PATH=/models/latest_model.joblib
+      - LABEL_ENCODER_PATH=/models/latest_label_encoder.joblib
+      - CONFIG_PATH=/app/configs/train.yaml
+    volumes:
+      - ./artifacts/models:/models:ro
+    ports:
+      - "8000:8000"
+    depends_on:
+      - trainer

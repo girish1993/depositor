@@ -170,6 +170,7 @@ class Trainer:
 
 
 if __name__ == "__main__":
-    cfg = Loader.read_yaml(file_path="configs/train.yaml")
+    config_path = os.environ.get("CONFIG_PATH", "configs/train.yaml")
+    cfg = Loader.read_yaml(file_path=config_path)
     trainer = Trainer(cfg=cfg)
     trainer.run()
